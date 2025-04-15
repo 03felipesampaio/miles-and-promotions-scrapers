@@ -18,32 +18,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Log in to DockerHub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # - name: Build and push Docker image
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: ./Dockerfile
-      #     push: true
-      #     tags: ${{ secrets.DOCKER_USERNAME }}/miles-and-promotions-scrapers:latest
-
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v2" # google-github-actions/auth@v2
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}"
 
-      - name: "Deploy to Cloud Run"
-        uses: "google-github-actions/deploy-cloudrun@v2" # google-github-actions/deploy-cloudrun@v2
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/miles-and-promotions-scrapers/miles-and-promotions-scrapers:latest .
+
+      - name: Push Docker image to Google Container Registry
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/miles-and-promotions-scrapers/miles-and-promotions-scrapers:latest
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
         with:
           job: "${{ env.JOB }}"
           region: "${{ env.REGION }}"
-          source: ./
+          image: "${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/miles-and-promotions-scrapers/miles-and-promotions-scrapers:latest"
           env_vars: |-
             PROJECT_ID=${{ env.PROJECT_ID }}
             REGION=${{ env.REGION }}
