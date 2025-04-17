@@ -58,7 +58,7 @@ if __name__ == "__main__":
     logger.info(f"Finished to fetch data successfully. Status code: {response.status_code}")
     if response.status_code == 200:
         # Write the response content to a GCP bucket
-        bucket_name = os.getenv("GCP_BUCKET_NAME")
+        bucket_name = os.getenv("GCP_BUCKET_CRAWLERS_RESPONSE")
         today = datetime.now(timezone.utc)
         destination_blob_name = f"livelo/{today.year}/{today.month}/{today.strftime('%Y%m%d')}_livelo_partners_api_response.json"
         write_to_gcp_bucket(bucket_name, destination_blob_name, response.text)
