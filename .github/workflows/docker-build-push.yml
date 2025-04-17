@@ -9,6 +9,7 @@ env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   REGION: ${{ secrets.REGION }}
   JOB: ${{ secrets.JOB }}
+  GCP_BUCKET_CRAWLERS_RESPONSE: ${{ secrets.GCP_BUCKET_CRAWLERS_RESPONSE }}
 
 jobs:
   build-and-push:
@@ -48,3 +49,4 @@ jobs:
             PROJECT_ID=${{ env.PROJECT_ID }}
             REGION=${{ env.REGION }}
             JOB=${{ env.JOB }}
+            GCP_BUCKET_CRAWLERS_RESPONSE=${{ env.GCP_BUCKET_CRAWLERS_RESPONSE }}
