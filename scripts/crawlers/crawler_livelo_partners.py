@@ -44,8 +44,8 @@ def write_to_gcp_bucket(bucket_name: str, destination_blob_name: str, data: str)
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
 
-        # Upload the data
-        blob.upload_from_string(data)
+        # Upload the data with MIME type
+        blob.upload_from_string(data, content_type="application/json")
         logger.info(f"Data successfully uploaded to {bucket_name}/{destination_blob_name}")
     except Exception as e:
         logger.error(f"Failed to upload data to GCP bucket: {e}")
